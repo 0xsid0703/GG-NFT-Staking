@@ -10,7 +10,7 @@ The users can stake:
 
 2. Common NFT
 
-Common NFTs are displayed by category. i.e bling squad, adventure squad etc
+All NFTs are displayed by category. i.e Legendary, bling squad, adventure squad etc
 
 Users can unstake:
 
