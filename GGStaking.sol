@@ -104,8 +104,8 @@ contract GGStaking is Ownable {
     }
     function setClaimFee(uint256 _claimFee) external onlyOwner {
         require(
-            _claimFee > 0 && _claimFee < 100,
-            "setClaimFee: amount should be greater than 0 and smaller than 100"
+            _claimFee > 0 && _claimFee <= 10,
+            "setClaimFee: amount should be greater than 0 and smaller than 10"
         );
         require(
             claimFeeWallet != address(0),
