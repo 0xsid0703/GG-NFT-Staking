@@ -92,9 +92,9 @@ describe("GatorGang NFT Staking test case", async () => {
         "setTokenInfo: Empty array"
       );
     });
-    it("setTokenInfo: the array length should be match", async() => {
+    it("setTokenInfo: the array lengths should match", async() => {
       await expect(ggStaking.connect(owner).setTokenInfo([1], [], [])).to.be.revertedWith(
-        "setTokenInfo: the array length should be match"
+        "setTokenInfo: the array lengths should match"
       );
     })
     it("setTokenInfo: the squadId should be less than squadTokenFeature length", async() => {
@@ -138,14 +138,14 @@ describe("GatorGang NFT Staking test case", async () => {
         "NFT Stake: Empty Array"
       );
     });
-    it("NFT Stake: not owner of token", async () => {
+    it("NFT Stake: only Owner of NFT can stake it", async () => {
       await expect(
         ggStaking.connect(addr1).stake([ADDR1_NFT_CNT])
-      ).to.be.revertedWith("NFT Stake: not owner of token");
+      ).to.be.revertedWith("NFT Stake: only Owner of NFT can stake it");
     });
-    it("NFT Stake: duplicate token ids in input params", async () => {
+    it("NFT Stake: duplicate token ids in input parameters", async () => {
       await expect(ggStaking.connect(addr1).stake([1, 1])).to.be.revertedWith(
-        "NFT Stake: duplicate token ids in input params"
+        "NFT Stake: duplicate token ids in input parameters"
       );
     });
     it("stake tokens success", async () => {
@@ -402,14 +402,14 @@ describe("GatorGang NFT Staking test case", async () => {
     });
   });
   describe("checked claimFee setting", async() => {
-    it("setClaimFee: the array length should be greater than 0 and smaller that 100", async () => {
+    it("setClaimFee: amount should be greater than 0 and smaller than 10", async () => {
       await expect(ggStaking.connect(owner).setClaimFee(0)).to.be.revertedWith(
-        "setClaimFee: the array length should be greater than 0 and smaller that 100"
+        "setClaimFee: amount should be greater than 0 and smaller than 10"
       )
     });
-    it("setClaimFee: the claimFeeWallet should be has address", async () => {
+    it("setClaimFee: the claimFeeWallet must have a valid address", async () => {
       await expect(ggStaking.connect(owner).setClaimFee(10)).to.be.revertedWith(
-        "setClaimFee: the claimFeeWallet should be has address"
+        "setClaimFee: the claimFeeWallet must have a valid address"
       );
     });
     it("checked setClaimFeeWallet", async () => {
