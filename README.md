@@ -167,4 +167,4 @@ Our User gets: **1645.34 EG Tokens**
 Note: Only 1 All Squad holder is allowed per wallet. The user in Example 3 can send his second All Squad to another wallet for staking to get a higher reward. If not, all NFTs after the first All Squad will be treated as common NFTs and will get a lower reward.
 
 ## Withdraw Rewards
-User can unstake the EG rewards received. If they do, they will pay a 5% fee. The fee can be set to a maximum of 10%. This fee is sent to admin Wallet.
+User can unstake the EG rewards received. If they do, they will pay a 5% fee. The fee can be set to a maximum of 10%. This fee is sent to admin Wallet and then distributed to all existing GG Stakers in the next admin drop.
