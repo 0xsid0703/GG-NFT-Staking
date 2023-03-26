@@ -76,7 +76,7 @@ Smart Contract Calculates this user stats to be:
 
 Smart Contract Also Calculates:
 
-1. totalLegendaryStakers: 20 (total of all legendaries staked)
+1. totalLegendaryStaked: 20 (total of all legendaries staked)
 2. totalAllSquadHolders: 50 (total AllSquad holders)
 3. totalCommonNFTsStaked: 161 (total of all common NFTs staked)
 
@@ -112,7 +112,7 @@ Smart Contract Calculates this user stats to be:
 
 Smart Contract Also Calculates:
 
-1. totalLegendaryStakers: 20 (total of all legendaries staked)
+1. totalLegendaryStaked: 20 (total of all legendaries staked)
 2. totalAllSquadHolders: 50 (total AllSquad holders)
 3. totalCommonNFTsStaked: 161 (total of all common NFTs staked. Calculate commonNFTCountforHolder for all holders)
 
@@ -148,7 +148,7 @@ Smart Contract Calculates this user stats to be:
 
 Smart Contract Also Calculates:
 
-1. totalLegendaryStakers: 20 (total of all legendaries staked)
+1. totalLegendaryStaked: 20 (total of all legendaries staked)
 2. totalAllSquadHolders: 50 (total AllSquad holders)
 3. totalCommonNFTsStaked: 161 (total of all common NFTs staked. Calculate commonNFTCountforHolder for all holders)
 
