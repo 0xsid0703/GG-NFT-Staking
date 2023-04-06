@@ -124,7 +124,7 @@ Admin Distributes Rewards (distributeRewards): **100,000 EG tokens to all users.
 
 Our User gets: **4934.78 EG Tokens**
 
-1. From Legendary Pool - 4500 (3/20 * 45000)
+1. From Legendary Pool - 4500 (2/20 * 45000)
 2. All Squad Pool - 0 
 3. Common Pool - 434.78 (7/161 * 10000)
 
