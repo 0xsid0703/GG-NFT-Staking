@@ -2,6 +2,7 @@ const { ethers, upgrades } = require("hardhat");
 const { expect } = require("chai");
 
 const BINANCE_ROUTER_ADDRESS = "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3";
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const baseURI = "https://eg-nft-api-dev.herokuapp.com/api/v1/nft/";
 const SQUAD_FEATURE_CNT = 8;
 const ADDR1_NFT_CNT = 18;
@@ -203,6 +204,11 @@ describe("GatorGang NFT Staking test case", async () => {
         "setRewardsPercent: the total rewards percent should be 100"
       );
     });
+    it("depositReward: the amount should be greater than 0", async () => {
+      await expect(ggStaking.depositReward(0)).to.be.revertedWith(
+        "depositReward: the amount should be greater than 0"
+      );
+    });
     it("depositReward: the total rewards percent should be 100", async () => {
       await expect(ggStaking.depositReward(10)).to.be.revertedWith(
         "depositReward: the total rewards percent should be 100"
@@ -337,21 +343,21 @@ describe("GatorGang NFT Staking test case", async () => {
   describe("checked second unstake with user2", async () => {
     it("checked unstake tokens success and squad flag will be false", async () => {
       var tokenIds = [];
-      for (var i = ADDR2_LEGENDARY_CNT; i < ADDR2_NFT_CNT; i = i + SQUAD_FEATURE_CNT) {
+      for (var i = ADDR2_LEGENDARY_CNT; i < ADDR2_NFT_CNT; i++) {
         tokenIds.push(i + ADDR1_NFT_CNT);
       }
       await ggStaking.connect(addr2).unstake(tokenIds);
-      const userInfo = await ggStaking.userInfos(addr2.address);
-      expect(userInfo.totalNFTCountForHolder).to.equal(ADDR2_NFT_CNT - ADDR2_LEGENDARY_CNT - tokenIds.length); //17
+      let userInfo = await ggStaking.userInfos(addr2.address);
+      expect(userInfo.totalNFTCountForHolder).to.equal(ADDR2_NFT_CNT - ADDR2_LEGENDARY_CNT - tokenIds.length); //0
       expect(userInfo.isLegendaryStaker).to.equal(false);
       expect(userInfo.stakedLegendaryCountForHolder).to.equal(0);
       expect(userInfo.isAllSquadStaker).to.equal(false);
-      expect(userInfo.commonNFTHolder).to.equal(true);
-      expect(userInfo.commonNFTCountForHolder).to.equal(ADDR2_NFT_CNT - ADDR2_LEGENDARY_CNT - tokenIds.length);  //17
-      const totalStakedGators = await ggStaking.totalStakedGators();
-      const totalLegendaryStaked = await ggStaking.totalLegendaryStaked();
-      const totalAllSquadHolders = await ggStaking.totalAllSquadHolders();
-      const totalCommonNFTsStaked = await ggStaking.totalCommonNFTsStaked();
+      expect(userInfo.commonNFTHolder).to.equal(false);
+      expect(userInfo.commonNFTCountForHolder).to.equal(ADDR2_NFT_CNT - ADDR2_LEGENDARY_CNT - tokenIds.length);  //0
+      let totalStakedGators = await ggStaking.totalStakedGators();
+      let totalLegendaryStaked = await ggStaking.totalLegendaryStaked();
+      let totalAllSquadHolders = await ggStaking.totalAllSquadHolders();
+      let totalCommonNFTsStaked = await ggStaking.totalCommonNFTsStaked();
       expect(totalStakedGators).to.equal(ADDR1_NFT_CNT + ADDR2_NFT_CNT - 2 - tokenIds.length);
       expect(totalLegendaryStaked).to.equal(
         ADDR1_LEGENDARY_CNT + ADDR2_LEGENDARY_CNT - 1
@@ -366,7 +372,43 @@ describe("GatorGang NFT Staking test case", async () => {
         SQUAD_FEATURE_CNT -
         1 + SQUAD_FEATURE_CNT -
         tokenIds.length
-      );  //23
+      ); 
+      tokenIds = [];
+      for (var i = ADDR2_LEGENDARY_CNT; i < ADDR2_NFT_CNT; i++) {
+        tokenIds.push(i + ADDR1_NFT_CNT);
+      }
+      await ggStaking.connect(addr2).stake(tokenIds);
+      tokenIds = [];
+      for (var i = ADDR2_LEGENDARY_CNT; i < ADDR2_NFT_CNT; i = i + SQUAD_FEATURE_CNT) {
+        tokenIds.push(i + ADDR1_NFT_CNT);
+      }
+      await ggStaking.connect(addr2).unstake(tokenIds);
+      userInfo = await ggStaking.userInfos(addr2.address);
+      expect(userInfo.totalNFTCountForHolder).to.equal(ADDR2_NFT_CNT - ADDR2_LEGENDARY_CNT - tokenIds.length); //17
+      expect(userInfo.isLegendaryStaker).to.equal(false);
+      expect(userInfo.stakedLegendaryCountForHolder).to.equal(0);
+      expect(userInfo.isAllSquadStaker).to.equal(false);
+      expect(userInfo.commonNFTHolder).to.equal(true);
+      expect(userInfo.commonNFTCountForHolder).to.equal(ADDR2_NFT_CNT - ADDR2_LEGENDARY_CNT - tokenIds.length);  //17
+      totalStakedGators = await ggStaking.totalStakedGators();
+      totalLegendaryStaked = await ggStaking.totalLegendaryStaked();
+      totalAllSquadHolders = await ggStaking.totalAllSquadHolders();
+      totalCommonNFTsStaked = await ggStaking.totalCommonNFTsStaked();
+      expect(totalStakedGators).to.equal(ADDR1_NFT_CNT + ADDR2_NFT_CNT - 2 - tokenIds.length);
+      expect(totalLegendaryStaked).to.equal(
+        ADDR1_LEGENDARY_CNT + ADDR2_LEGENDARY_CNT - 1
+      );
+      expect(totalAllSquadHolders).to.equal(1);
+      expect(totalCommonNFTsStaked).to.equal(
+        ADDR1_NFT_CNT -
+        ADDR1_LEGENDARY_CNT -
+        SQUAD_FEATURE_CNT +
+        ADDR2_NFT_CNT -
+        ADDR2_LEGENDARY_CNT -
+        SQUAD_FEATURE_CNT -
+        1 + SQUAD_FEATURE_CNT -
+        tokenIds.length
+      );
     });
     it ("checked user1 pending rewards after second unstake", async() => {
       const getPending = await ggStaking.getPending(addr1.address);
@@ -376,7 +418,7 @@ describe("GatorGang NFT Staking test case", async () => {
       const getPending = await ggStaking.getPending(addr2.address);
       expect(getPending).to.equal("115964912280701754385964");
     })
-  })
+  });
   describe("checked claim", async () => {
     it("checked first user claim success", async () => {
       await ggStaking.connect(addr1).claim();
@@ -402,17 +444,17 @@ describe("GatorGang NFT Staking test case", async () => {
     });
   });
   describe("checked claimFee setting", async() => {
-    it("setClaimFee: amount should be greater than 0 and smaller than 10", async () => {
-      await expect(ggStaking.connect(owner).setClaimFee(0)).to.be.revertedWith(
-        "setClaimFee: amount should be greater than 0 and smaller than 10"
+    it("setClaimFee: amount should be smaller than 10", async () => {
+      await expect(ggStaking.connect(owner).setClaimFee(20)).to.be.revertedWith(
+        "setClaimFee: amount should be smaller than 10"
       )
     });
-    it("setClaimFee: the claimFeeWallet must have a valid address", async () => {
-      await expect(ggStaking.connect(owner).setClaimFee(10)).to.be.revertedWith(
-        "setClaimFee: the claimFeeWallet must have a valid address"
+    it("setClaimFeeWallet: the claimFeeWallet must have a valid address", async () => {
+      await expect(ggStaking.connect(owner).setClaimFeeWallet(ZERO_ADDRESS)).to.be.revertedWith(
+        "setClaimFeeWallet: the claimFeeWallet must have a valid address"
       );
     });
-    it("checked setClaimFeeWallet", async () => {
+    it("checked setClaimFeeWallet success", async () => {
       await ggStaking.connect(owner).setClaimFeeWallet(addr3.address);
       expect(await ggStaking.claimFeeWallet()).to.equal(addr3.address);
     });
@@ -519,8 +561,8 @@ describe("GatorGang NFT Staking test case", async () => {
       expect(totalRewardBalance).to.equal("600000000000000000000000");
     });
     it("checked user1 pending rewards after 5th depositReward", async () => {
-      const getPending = await ggStaking.getPending(addr1.address); // 159977116704805491990845 = 92608695652173913043478 + (40000 + 20000 + (20000 / 19 * 7)) * 1000000000000000000
-      expect(getPending).to.equal("159977116704805491990845");
+      const getPending = await ggStaking.getPending(addr1.address); // 159977116704805491990846 = 92608695652173913043478 + (40000 + 20000 + (20000 / 19 * 7)) * 1000000000000000000
+      expect(getPending).to.equal("159977116704805491990846");
 
     });
     it("checked user2 pending rewards after 5th depositReward", async () => {
@@ -529,7 +571,7 @@ describe("GatorGang NFT Staking test case", async () => {
     });
     it("checked user1 pending rewards after 5th depositReward again", async () => {
       const getPending = await ggStaking.getPending(addr1.address); 
-      expect(getPending).to.equal("159977116704805491990845");
+      expect(getPending).to.equal("159977116704805491990846");
 
     });
     it("checked user2 pending rewards after 5th depositReward again", async () => {
@@ -542,11 +584,11 @@ describe("GatorGang NFT Staking test case", async () => {
       await ggStaking.connect(addr1).claim();
     });
     it("checked first user usdt balance", async() => {
-      const addr1UsdtBalance = await eg.balanceOf(addr1.address);   //284035087719298245614035 + 159977116704805491990845 * 0.9 = 428014492753623188405796
-      expect(addr1UsdtBalance).to.equal("428014492753623188405796");
+      const addr1UsdtBalance = await eg.balanceOf(addr1.address);   //284035087719298245614035 + 159977116704805491990846 * 0.9 = 428014492753623188405797
+      expect(addr1UsdtBalance).to.equal("428014492753623188405797");
     })
     it("checked feeWallet usdt balance", async() => {
-      const feeWalletUsdtBalance = await eg.balanceOf(addr3.address); //159977116704805491990845 * 0.1 = 15997711670480549199084
+      const feeWalletUsdtBalance = await eg.balanceOf(addr3.address); //159977116704805491990846 * 0.1 = 15997711670480549199084
       expect(feeWalletUsdtBalance).to.equal("15997711670480549199084");
     });
 
